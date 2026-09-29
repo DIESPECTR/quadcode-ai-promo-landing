@@ -8,7 +8,7 @@
       const player = button.closest('.demo-player');
       if (!player) return;
       const frame = document.createElement('iframe');
-      frame.src = `https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&rel=0`;
+      frame.src = `https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&playsinline=1&rel=0`;
       frame.title = button.getAttribute('aria-label') || 'Quadcode AI video';
       frame.allow = 'accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture; web-share';
       frame.allowFullscreen = true;

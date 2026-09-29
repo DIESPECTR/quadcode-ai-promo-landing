@@ -38,8 +38,8 @@ def test_home_and_anonymous_config(client):
     assert page.status_code == 200
     assert '<html lang="en">' in page.text
     assert 'Build websites, dashboards' in page.text
-    assert 'Start with 1,000 free credits.' in page.text
-    assert 'Get 1,000 free credits when you register.' in page.text
+    assert '1,000 free credits at sign-up.' in page.text
+    assert 'Get 1,000 free credits when you register for Quadcode AI.' in page.text
     assert 'The 1,000 sign-up credits are separate from any promo code.' in page.text
     assert 'Do I need a promo code for the 1,000 credits?' in page.text
     assert 'Gmail' not in page.text
@@ -113,7 +113,10 @@ def test_main_promo_is_first_and_walkthroughs_remain_click_to_load(client):
     script = client.get('/static/app.js').text
     assert all(video_id in script for video_id in ids)
     assert 'youtube-nocookie.com/embed/${videoId}' in script
-    assert 'autoplay=1' in script  # Only added to an iframe when a play button is clicked.
+    assert 'autoplay=1&playsinline=1' in script  # Only added after an explicit play click.
+    html = client.get('/').text
+    assert 'Video not playing? Open on YouTube' in html
+    assert 'https://www.youtube.com/watch?v=nyHDkDUzH-o' in html
 
 
 def test_retired_google_email_endpoints_are_closed(client, monkeypatch):
