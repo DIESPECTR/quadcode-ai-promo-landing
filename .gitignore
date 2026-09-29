@@ -1,0 +1,11 @@
+.quadcodeai/
+.temp/
+temp/
+__pycache__/
+.pytest_cache/
+*.pyc
+*.sqlite3
+*.sqlite3-shm
+*.sqlite3-wal
+.env
+codes.csv
