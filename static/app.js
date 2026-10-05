@@ -104,6 +104,58 @@
   const choice = document.getElementById('contact-options');
   if (!choice) return;
   const summary = choice.querySelector('summary');
+  const dialog = document.getElementById('contact-dialog');
+  const inlineTrigger = document.querySelector('.contact-inline-trigger');
+  if (dialog && typeof dialog.showModal === 'function' && inlineTrigger) {
+    // Reuse the same two links; retain the disclosure when dialog is unsupported.
+    document.getElementById('contact-dialog-options').append(choice);
+    choice.open = true;
+    inlineTrigger.hidden = false;
+    const close = dialog.querySelector('.contact-dialog-close');
+    let opener, savedY = 0, bodyStyle = null, backdropPress = false;
+    const open = (trigger) => {
+      if (dialog.open) return;
+      opener = trigger;
+      savedY = window.scrollY;
+      bodyStyle = document.body.getAttribute('style');
+      document.documentElement.classList.add('contact-modal-open');
+      Object.assign(document.body.style, {position: 'fixed', top: `-${savedY}px`, width: '100%'});
+      dialog.showModal();
+      close.focus({preventScroll: true});
+    };
+    dialog.addEventListener('close', () => {
+      if (bodyStyle === null) document.body.removeAttribute('style');
+      else document.body.setAttribute('style', bodyStyle);
+      window.scrollTo({top: savedY, behavior: 'instant'});
+      document.documentElement.classList.remove('contact-modal-open');
+      opener?.focus({preventScroll: true});
+    });
+    close.addEventListener('click', () => dialog.close());
+    // Native modal contains keyboard focus; cancel is the browser's Escape action.
+    dialog.addEventListener('cancel', (event) => { event.preventDefault(); dialog.close(); });
+    const outside = (event) => {
+      const rect = dialog.getBoundingClientRect();
+      return event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom;
+    };
+    dialog.addEventListener('pointerdown', (event) => { backdropPress = event.target === dialog && outside(event); });
+    dialog.addEventListener('click', (event) => {
+      if (backdropPress && event.target === dialog && outside(event)) dialog.close();
+      backdropPress = false;
+    });
+    document.querySelectorAll('[data-contact-trigger]').forEach((link) => {
+      link.setAttribute('aria-haspopup', 'dialog');
+      link.setAttribute('aria-controls', 'contact-dialog');
+      link.addEventListener('click', (event) => {
+        if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+        event.preventDefault();
+        open(link);
+      });
+    });
+    const openFromHash = () => { if (location.hash === '#contact-options') open(inlineTrigger); };
+    window.addEventListener('hashchange', openFromHash);
+    openFromHash();
+    return;
+  }
   const reveal = () => { choice.open = true; };
   document.querySelectorAll('[data-contact-trigger]').forEach((link) => {
     link.addEventListener('click', (event) => {

@@ -190,3 +190,25 @@
 .contact-icon img{display:block;filter:brightness(0) invert(1)}
 .claim-card .claim-information h3{margin-top:32px}
 @media(max-width:360px){.contact-choice summary{font-size:12px;padding-inline:16px;gap:10px}.contact-link{padding:12px;gap:10px}}
+
+/* Contact modal: top layer avoids clipping by landing sections. */
+.contact-inline-trigger[hidden],.contact-dialog:not([open]){display:none}
+html.contact-modal-open{overflow:hidden;scrollbar-gutter:stable}
+.contact-dialog{width:min(500px,calc(100% - 32px));max-height:calc(100vh - 32px);max-height:calc(100dvh - 32px);margin:auto;padding:28px;border:1px solid #ffffff35;border-radius:24px;background:radial-gradient(circle at 100% 0%,#f1802420,transparent 55%),#17151a;color:#f7f7f8;box-shadow:0 24px 100px #0009;overflow:auto;overscroll-behavior:contain}
+.contact-dialog::backdrop{background:#050507cc;backdrop-filter:blur(6px)}
+.contact-dialog-heading{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.contact-dialog-heading .eyebrow{font-size:9px;letter-spacing:.1em}
+.contact-dialog-close{flex:none;display:grid;place-items:center;width:44px;height:44px;border:1px solid #ffffff30;border-radius:50%;background:#ffffff08;color:#fff;font-size:28px;cursor:pointer}
+.contact-dialog-close:hover{background:#ffffff18}
+.contact-dialog h2{font:500 34px/1.15 Lexend,Arial,sans-serif;letter-spacing:-.05em;margin:18px 0 12px}
+.contact-dialog h2 span{color:#f79b61}
+.contact-dialog p{font-size:14px;line-height:1.6;color:#c6c1c8;margin:0 0 20px}
+.contact-dialog .contact-choice{margin:0}
+.contact-dialog .contact-choice>summary{display:none}
+.contact-dialog .contact-links{margin:0;gap:12px}
+.contact-dialog .contact-link{min-height:80px;background:#ffffff05}
+.contact-dialog .contact-link:hover{background:#ffffff0d}
+.contact-dialog .contact-link:focus-visible{outline-offset:2px}
+.contact-dialog .contact-dialog-help{font-size:12px;margin:18px 0 0}
+.contact-dialog .contact-dialog-note{font-size:11px;color:#aaa5b0;border-top:1px solid #ffffff20;padding-top:14px;margin:14px 0 0}
+@media(max-width:400px){.contact-dialog{padding:20px;border-radius:20px}.contact-dialog h2{font-size:29px}.contact-dialog-heading .eyebrow{max-width:180px}.contact-dialog .contact-link{padding:12px;gap:10px}}

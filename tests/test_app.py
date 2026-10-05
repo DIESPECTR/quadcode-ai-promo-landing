@@ -84,7 +84,7 @@ def test_manual_contact_choice_links_and_copy(client):
     html = client.get('/').text
     parser = ContactParser()
     parser.feed(html)
-    assert len(parser.triggers) == 4  # Header, hero, video follow-up and how-to link.
+    assert len(parser.triggers) == 5  # Header, hero, video, how-to and enhanced claim-card CTA.
     assert all(link['href'] == '#contact-options' and 'target' not in link for link in parser.triggers)
     assert len(parser.choices) == 1 and 'open' not in parser.choices[0]
     assert {link['href'] for link in parser.links} == {
@@ -111,6 +111,16 @@ def test_manual_contact_choice_links_and_copy(client):
     assert "event.key === 'Escape'" in script
     assert 'summary.focus({preventScroll: true})' in script
     assert "window.addEventListener('hashchange', revealFromHash)" in script
+    assert 'id="contact-dialog"' in html
+    assert 'aria-labelledby="contact-dialog-title"' in html
+    assert 'aria-describedby="contact-dialog-description"' in html
+    assert 'aria-label="Close contact chooser" autofocus' in html
+    for behavior in ('dialog.showModal()', "dialog.addEventListener('cancel'", "dialog.addEventListener('close'", "dialog.addEventListener('pointerdown'", 'opener?.focus({preventScroll: true})', "choice.open = true", "document.getElementById('contact-dialog-options').append(choice)"):
+        assert behavior in script
+    css = client.get('/static/styles.css').text
+    assert '.contact-dialog::backdrop' in css
+    assert 'max-height:calc(100dvh - 32px)' in css
+    assert '.contact-inline-trigger[hidden]' in css
 
 
 def test_main_promo_is_first_and_walkthroughs_remain_click_to_load(client):
