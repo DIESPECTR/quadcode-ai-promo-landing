@@ -170,3 +170,23 @@
 .race-motion:hover{background:#151516}
 .race-motion[hidden]{display:none}
 @media(max-width:600px){.race-motion{top:54px;right:16px;font-size:11px}}
+
+/* Shared contact disclosure; native details remains usable without JavaScript. */
+#contact-options{scroll-margin-block:28px}
+.contact-choice{margin-bottom:16px;min-width:0}
+.contact-choice summary{list-style:none;line-height:1.4;padding-block:14px;min-height:54px}
+.contact-choice summary::-webkit-details-marker{display:none}
+.contact-chevron{flex:none;font-size:20px;line-height:1}
+.contact-choice[open] .contact-chevron{transform:rotate(180deg)}
+.contact-links{display:grid;gap:10px;margin-top:12px}
+.contact-link{display:flex;align-items:center;gap:14px;padding:14px;border:1px solid #ffffff32;border-radius:14px;background:#111115;min-height:76px}
+.contact-link:hover{border-color:#f79b61;background:#252128}
+.contact-link>span:nth-child(2){flex:1;min-width:0}
+.contact-link strong{display:block;font-size:16px;color:#fff}
+.contact-link small{display:block;margin-top:4px;font-size:12px;line-height:1.5;color:#c6c1c8}
+.contact-link>span:last-child{color:#ffc293}
+.contact-icon{display:grid;place-items:center;flex:none;width:42px;height:42px;border-radius:11px}
+.contact-icon-linkedin{background:#0a66c2}.contact-icon-telegram{background:#087fb2}
+.contact-icon img{display:block;filter:brightness(0) invert(1)}
+.claim-card .claim-information h3{margin-top:32px}
+@media(max-width:360px){.contact-choice summary{font-size:12px;padding-inline:16px;gap:10px}.contact-link{padding:12px;gap:10px}}

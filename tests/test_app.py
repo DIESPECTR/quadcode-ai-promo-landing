@@ -61,31 +61,56 @@ def test_home_and_anonymous_config(client):
     assert client.get('/static/app.js').status_code == 200
 
 
-def test_manual_channel_promo_links_and_copy(client):
+def test_manual_contact_choice_links_and_copy(client):
     from html.parser import HTMLParser
 
-    class PromoLinkParser(HTMLParser):
+    class ContactParser(HTMLParser):
         def __init__(self):
             super().__init__()
-            self.promo_links = []
+            self.triggers, self.links, self.choices, self.icons = [], [], [], []
 
         def handle_starttag(self, tag, attrs):
             attrs = dict(attrs)
-            if tag == 'a' and any(name in attrs.get('class', '').split() for name in ('header-cta', 'button-primary', 'button-dark')):
-                self.promo_links.append(attrs)
+            classes = attrs.get('class', '').split()
+            if tag == 'a' and 'data-contact-trigger' in attrs:
+                self.triggers.append(attrs)
+            if tag == 'a' and 'contact-link' in classes:
+                self.links.append(attrs)
+            if tag == 'details' and attrs.get('id') == 'contact-options':
+                self.choices.append(attrs)
+            if tag == 'img' and attrs.get('src') in ('/static/linkedin.svg', '/static/telegram.svg'):
+                self.icons.append(attrs)
 
     html = client.get('/').text
-    parser = PromoLinkParser()
+    parser = ContactParser()
     parser.feed(html)
-    assert len(parser.promo_links) == 4
-    assert all(link['href'] == 'https://t.me/quadcodeai' for link in parser.promo_links)
+    assert len(parser.triggers) == 4  # Header, hero, video follow-up and how-to link.
+    assert all(link['href'] == '#contact-options' and 'target' not in link for link in parser.triggers)
+    assert len(parser.choices) == 1 and 'open' not in parser.choices[0]
+    assert {link['href'] for link in parser.links} == {
+        'https://www.linkedin.com/company/quadcodeai/', 'https://t.me/quadcodeai'
+    }
+    assert len(parser.links) == 2
+    assert all(link.get('rel') == 'noopener noreferrer' and link.get('target') == '_blank' for link in parser.links)
+    assert len(parser.icons) == 2 and all(icon.get('alt') == '' for icon in parser.icons)
+    for icon in parser.icons:
+        response = client.get(icon['src'])
+        assert response.status_code == 200
+        assert response.headers['content-type'].startswith('image/svg+xml')
     assert '1,000 free credits when you register.' in html
     assert 'The 1,000 sign-up credits are separate from any promo code.' in html
-    assert all(link.get('rel') == 'noopener noreferrer' for link in parser.promo_links)
-    assert 'send a private message to the channel' in html
     assert 'A message does not guarantee a code.' in html
+    assert html.count('Get a promo code for 1,000 credits') == 2
+    assert 'Get my 1,000-credit promo code' in html
+    assert 'it provides 1,000 credits.' in html
+    assert 'Ask about the promo' not in html
+    assert 'No Message button on LinkedIn?' in html
+    assert 'Why Telegram?' not in html
     assert 'The bot will' not in html
-    assert 'Telegram channel: soon' not in html
+    script = client.get('/static/app.js').text
+    assert "event.key === 'Escape'" in script
+    assert 'summary.focus({preventScroll: true})' in script
+    assert "window.addEventListener('hashchange', revealFromHash)" in script
 
 
 def test_main_promo_is_first_and_walkthroughs_remain_click_to_load(client):

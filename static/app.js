@@ -98,3 +98,30 @@
     new IntersectionObserver(([entry]) => { visible = entry.isIntersecting && entry.intersectionRatio >= 0.2; sync(); }, {threshold: [0, 0.2]}).observe(cover);
   } else { visible = true; userPaused = true; }
 })();
+
+// One contact chooser for every promo CTA; links keep their native no-JS fallback.
+(() => {
+  const choice = document.getElementById('contact-options');
+  if (!choice) return;
+  const summary = choice.querySelector('summary');
+  const reveal = () => { choice.open = true; };
+  document.querySelectorAll('[data-contact-trigger]').forEach((link) => {
+    link.addEventListener('click', (event) => {
+      if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+      event.preventDefault();
+      reveal();
+      choice.scrollIntoView({block: 'start', behavior: 'instant'});
+      summary.focus({preventScroll: true});
+    });
+  });
+  const revealFromHash = () => { if (location.hash === '#contact-options') reveal(); };
+  window.addEventListener('hashchange', revealFromHash);
+  revealFromHash();
+  choice.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && choice.open) {
+      event.preventDefault();
+      choice.open = false;
+      summary.focus({preventScroll: true});
+    }
+  });
+})();
