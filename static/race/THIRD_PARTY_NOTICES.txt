@@ -1,0 +1,24 @@
+Arc Race / ArcEngine — third-party notices
+
+ArcEngine: MIT License, Copyright (c) 2026 Tearevo.
+The original license is included in LICENSE.
+
+Babylon.js and Babylon.js loaders 9.26.0
+Copyright 2023 The Babylon.js team (upstream NOTICE).
+Licensed under Apache License, Version 2.0.
+The full upstream license is in licenses/babylon-license.md;
+the upstream NOTICE is reproduced in licenses/babylon-notice.md.
+Both vendored JavaScript files match the official npm 9.26.0 files byte for byte.
+Sources: https://www.npmjs.com/package/babylonjs/v/9.26.0
+         https://www.npmjs.com/package/babylonjs-loaders/v/9.26.0
+
+simplex-noise
+Copyright (c) 2018 Jonas Wagner. MIT License.
+The full copyright and permission notice is retained at the start of
+libs/simplex-noise.js, including algorithm-source acknowledgments.
+Exact package version has not been independently established.
+
+Asset permissions are separate from the software licenses above.
+The licenses above are not a blanket grant for game models, textures,
+preview images or generated audio. Some asset permissions remain unresolved.
+This notice does not grant an MIT or Apache license to those assets.

@@ -37,7 +37,14 @@ def test_home_and_anonymous_config(client):
     page = client.get('/')
     assert page.status_code == 200
     assert '<html lang="en">' in page.text
-    assert 'Build websites, dashboards' in page.text
+    assert 'Four prompts.' in page.text
+    assert 'One playable racing game.' in page.text
+    assert 'An open-source engine was the starting point.' in page.text
+    assert 'not verbatim transcripts' in page.text
+    assert page.text.count('class="prompt-index"') == 4
+    assert page.text.index('id="play"') < page.text.index('id="creation-story"') < page.text.index('class="creation-offer"')
+    for feature in ('snowy track', 'buggy', 'dirt bike', 'tire tracks', 'drifting', 'nitro', 'obstacles', 'mud patches', 'Refine the UI'):
+        assert feature in page.text
     assert '1,000 free credits at sign-up.' in page.text
     assert 'Get 1,000 free credits when you register for Quadcode AI.' in page.text
     assert 'The 1,000 sign-up credits are separate from any promo code.' in page.text
@@ -104,7 +111,7 @@ def test_main_promo_is_first_and_walkthroughs_remain_click_to_load(client):
 
     parser = DemoParser()
     parser.feed(client.get('/').text)
-    ids = ['nyHDkDUzH-o', '6S5AX__QRyA', 'HFVjbUmvWDU']
+    ids = ['nyHDkDUzH-o', '6S5AX__QRyA']
     assert parser.buttons == ids
     assert parser.iframes == []
     assert '/static/quadcode-promo.jpg' in parser.images
@@ -309,3 +316,97 @@ def test_promo_email_is_in_english(monkeypatch):
     assert 'LIVE-CODE-A' in body
     assert 'https://guides.quadcode.ai/#guides' in body
     assert not __import__('re').search(r'[А-Яа-яЁё]', body)
+
+
+def test_results_showcase_sources_and_assets(client):
+    from html.parser import HTMLParser
+
+    class ShowcaseParser(HTMLParser):
+        def __init__(self):
+            super().__init__()
+            self.images, self.links, self.ids = [], [], []
+            self.cards = 0
+
+        def handle_starttag(self, tag, attrs):
+            attrs = dict(attrs)
+            if 'id' in attrs:
+                self.ids.append(attrs['id'])
+            if tag == 'img':
+                self.images.append(attrs)
+            if tag == 'a':
+                self.links.append(attrs)
+            if tag == 'article' and 'demo-card' in attrs.get('class', '').split():
+                self.cards += 1
+
+    html = client.get('/').text
+    parser = ShowcaseParser()
+    parser.feed(html)
+    assert parser.cards == 6  # Promo plus five results; playable game is in hero.
+    assert {'results', 'case-study', 'guides'}.issubset(parser.ids)
+    assert len(parser.ids) == len(set(parser.ids))
+    for link in parser.links:
+        href = link.get('href', '')
+        if href.startswith('#'):
+            assert href[1:] in parser.ids
+        if link.get('target') == '_blank':
+            assert {'noopener', 'noreferrer'}.issubset(link.get('rel', '').split())
+    expected = {'showcase-bloom.webp', 'showcase-capybara.webp', 'showcase-chess.jpg', 'showcase-rpg.jpg', 'showcase-ugc.webp'}
+    images = [image for image in parser.images if '/showcase-' in image['src']]
+    assert {image['src'].split('/')[-1] for image in images} == expected
+    for image in images:
+        assert image.get('alt') and image.get('loading') == 'lazy'
+        response = client.get(image['src'])
+        assert response.status_code == 200
+        assert response.headers['content-type'].startswith('image/')
+    for video_id in ('EWaZmB2nztA', 'w5zFQ66HQmg'):
+        assert f'https://www.youtube.com/watch?v={video_id}' in {link.get('href') for link in parser.links}
+
+
+def test_case_study_is_sourced_and_does_not_promise_project_cost(client):
+    html = client.get('/').text
+    assert 'EXCERPT FROM THE STARTING PROMPT' in html
+    assert 'BLOOM CARE' in html and 'Claude Sonnet' in html
+    assert '01 / SET THE DIRECTION' in html
+    assert '02 / GIVE THE PAGE A STORY' in html
+    assert '03 / REFINE THE EXPERIENCE' in html
+    assert 'A brand brief becomes a complete visual direction' in html
+    assert 'not a guarantee that the bonus covers an entire project' in html
+    assert 'video thumbnails' in html and 'gameplay frame' in html
+    assert html.count('class="guide-preview"') == 2
+    assert '<iframe' not in html
+
+
+def test_game_is_primary_proof_without_dashboard_or_build_labels(client):
+    html = client.get('/').text
+    assert html.index('id="play"') < html.index('id="watch"')
+    assert 'id="race-cover"' in html
+    assert 'aria-controls="race-player" aria-expanded="false"' in html
+    for retired in ('KOTYA', 'BUILD 0.1.0', 'ARCENGINE', 'quadcode-dashboard', 'HFVjbUmvWDU'):
+        assert retired.lower() not in html.lower()
+    assert 'href="https://quadcode.ai"' in html
+    script = client.get('/static/app.js').text
+    assert 'player.replaceChildren();' in script
+    assert 'cover.hidden = false' in script
+
+
+def test_race_cinematic_poster_is_local_and_disclosed(client):
+    html = client.get('/').text
+    assert '/static/race-cinematic.webp' in html
+    assert 'CINEMATIC PREVIEW' in html
+    assert 'not a gameplay screenshot' in html
+    assert 'width="2560" height="1440"' in html
+    poster = client.get('/static/race-cinematic.webp')
+    assert poster.status_code == 200
+    assert poster.headers['content-type'].startswith('image/')
+    assert len(poster.content) < 500_000
+    assert '<video' in html
+    assert 'muted loop playsinline preload="none"' in html
+    assert 'data-src="/static/race-flyover-web.mp4"' in html
+    video = client.get('/static/race-flyover-web.mp4')
+    assert video.status_code == 200
+    assert video.headers['content-type'] == 'video/mp4'
+    assert len(video.content) < 6_000_000
+    script = client.get('/static/app.js').text
+    for guard in ('prefers-reduced-motion', 'saveData', 'IntersectionObserver', 'visibilitychange', '!cover.hidden', '!userPaused'):
+        assert guard in script
+    assert '!video.ended' not in script

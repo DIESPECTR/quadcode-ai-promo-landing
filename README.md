@@ -24,3 +24,6 @@ The `.gitignore` excludes local SQLite databases, private code exports, IDE stat
 The previous Google OAuth, Gmail/SMTP and `/api/claim` flow remains in the repository **only for isolated regression tests**. In a normal app process `LEGACY_CLAIMS_ENABLED = False` in `app.py`: `/api/me`, `/auth/google`, `/auth/callback`, `/auth/logout` and `/api/claim` respond with HTTP 410. Do not turn it on or import codes for the channel campaign. Remove it once historical data has been handled securely. Existing secrets, CSV files and databases must not be committed.
 
 The implementation checklist and launch blockers are in `meta/plans/landing-conversion-audit.md`.
+
+## ArcRace hosting
+ArcRace lives in static/race/ (official build including licenses). Existing FastAPI /static mount serves it; no separate service or environment variables. Landing /#play loads it on click; direct path /static/race/index.html. After authorized deployment the documented Railway game URL will be https://landing-production-1c17.up.railway.app/static/race/index.html — this update is NOT deployed yet. Ship the entire static/race tree, never the editor/source tree. To update, regenerate the official build in the game project and replace this release copy.
