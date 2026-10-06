@@ -387,7 +387,7 @@ def test_results_showcase_sources_and_assets(client):
             assert href[1:] in parser.ids
         if link.get('target') == '_blank':
             assert {'noopener', 'noreferrer'}.issubset(link.get('rel', '').split())
-    expected = {'showcase-bloom.webp', 'showcase-unreal.webp', 'showcase-chess.jpg', 'showcase-rpg.jpg', 'showcase-ugc.webp'}
+    expected = {'showcase-bloom.webp', 'showcase-bloom-detail.webp', 'showcase-unreal.webp', 'showcase-chess.jpg', 'showcase-rpg.jpg', 'showcase-ugc.webp'}
     images = [image for image in parser.images if '/showcase-' in image['src']]
     assert {image['src'].split('/')[-1] for image in images} == expected
     for image in images:
@@ -409,7 +409,22 @@ def test_case_study_is_sourced_and_does_not_promise_project_cost(client):
     assert 'A brand brief becomes a complete visual direction' in html
     assert 'not a guarantee that the bonus covers an entire project' in html
     assert 'video thumbnails' in html and 'gameplay frame' in html
-    assert html.count('class="guide-preview"') == 2
+    assert 'class="guide-preview"' not in html
+    assert html.count('class="guide-prompt ') == 2
+    assert 'STARTING PROMPT · EXCERPT' in html
+    assert 'PRODUCT SHOT · EXCERPT' in html
+    assert html.count('src="/static/showcase-bloom.webp"') == 1
+    assert html.count('src="/static/showcase-ugc.webp"') == 1
+    assert html.count('src="/static/showcase-bloom-detail.webp"') == 1
+    assert html.count('class="brand-lockup"') == 2
+    assert 'quadcode-mark.svg' not in html
+    assert '>quadcode.ai<' not in html
+    assert 'v=brand-visuals-1' in html
+    response = client.get('/static/quadcode-logo.webp')
+    assert response.status_code == 200
+    assert response.headers['content-type'].startswith('image/webp')
+    assert len(response.content) < 20_000
+    assert '.brand img.brand-lockup' in client.get('/static/styles.css').text
     assert '<iframe' not in html
 
 

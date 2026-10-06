@@ -32,3 +32,9 @@ UGC guide: GPT-Image actor, GPT-Image product compositing, Kling motion. Origina
 
 ## Boundaries
 No synthetic proof images, invented reviews, invented build times, credit budgets or conversion metrics. A complete viewing of all channel footage remains outside the completed source review. Real phone/in-app playback and Telegram redemption still require device-level testing; publishing this iteration requires a separate request.
+
+## Brand and visual feedback iteration
+- Official logo lockup: https://guides.quadcode.ai/ui_views/assets/qcai-logo-lockup.webp → `static/quadcode-logo.webp` (384×91, lossless WebP with alpha). Original response is a palette PNG despite its .webp URL; converted deterministically, with no redrawing or substitute logo font.
+- Separate BLOOM CARE structure frame: https://guides.quadcode.ai/ui_views/assets/evidence/beauty-brand-landing/step-2-poster.webp → `static/showcase-bloom-detail.webp` (1600×902). An authentic scrolling frame, not a full-page screenshot. The gallery keeps the original hero poster once.
+- Guide cards now show readable HTML prompt excerpts, not repeated result photos. Beauty excerpt is the first sentence of step 1. UGC excerpt is the opening of step 2 (woman presenting a black leather tote bag), explicitly shortened with an ellipsis. Flow labels are editorial summaries, not generated chat transcripts. Official guide text was read in the browser.
+- No generated imagery, invented result evidence, or new performance/price claims. Game/cinematic/Unreal assets and behavior are unchanged.

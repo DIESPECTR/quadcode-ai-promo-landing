@@ -227,3 +227,23 @@ html.contact-modal-open{overflow:hidden;scrollbar-gutter:stable}
 @media(max-width:900px){.results-grid>.result-unreal:first-child{grid-template-columns:minmax(0,1.4fr) minmax(0,1fr)}}
 @media(max-width:760px){.results-grid>.result-unreal:first-child{display:flex}.results-grid .result-unreal h3{font-size:28px}}
 @media(max-width:600px){.results-grid{grid-template-columns:minmax(0,1fr)}}
+
+/* Official wordmark is an asset, not a substitute typeset font. */
+.brand{min-height:44px;letter-spacing:normal}
+.brand img.brand-lockup{display:block;width:176px;height:auto;aspect-ratio:384/91;object-fit:contain}
+.footer-inner .brand img.brand-lockup{width:160px;height:auto}
+/* Guide previews show source prompts rather than repeating result posters. */
+.guide-card{justify-content:flex-start;min-width:0}
+.guide-card .guide-bottom{margin-top:auto}
+.guide-prompt{display:flex;flex-direction:column;gap:16px;min-height:230px;padding:20px;border:1px solid #ffffff28;border-radius:10px;background:#151217;color:#f7f0f3}
+.guide-prompt-web{background:#eee5dc;color:#302620;border-color:#e2c9ba}
+.guide-prompt-label{font-size:9px;font-weight:700;letter-spacing:.09em;line-height:1.6;color:#d6b7c8}
+.guide-prompt-web .guide-prompt-label{color:#735443}
+.guide-prompt-copy{font:500 17px/1.55 Geist,Arial,sans-serif;overflow-wrap:break-word}
+.guide-prompt-copy em{font-style:normal;color:#ffbd93}
+.guide-prompt-web .guide-prompt-copy em{color:#8e4934}
+.guide-prompt-flow{margin-top:auto;padding-top:14px;border-top:1px solid #ffffff26;font-size:11px;line-height:1.7;color:#d4c4cd}
+.guide-prompt-flow>span{padding-inline:4px}
+.guide-prompt-web .guide-prompt-flow{border-color:#30262030;color:#6a5042}
+@media(max-width:600px){.brand img.brand-lockup{width:150px}.guide-prompt{min-height:0;padding:18px}.guide-prompt-copy{font-size:16px}}
+@media(max-width:360px){.brand img.brand-lockup{width:140px}}
