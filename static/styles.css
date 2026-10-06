@@ -212,3 +212,18 @@ html.contact-modal-open{overflow:hidden;scrollbar-gutter:stable}
 .contact-dialog .contact-dialog-help{font-size:12px;margin:18px 0 0}
 .contact-dialog .contact-dialog-note{font-size:11px;color:#aaa5b0;border-top:1px solid #ffffff20;padding-top:14px;margin:14px 0 0}
 @media(max-width:400px){.contact-dialog{padding:20px;border-radius:20px}.contact-dialog h2{font-size:29px}.contact-dialog-heading .eyebrow{max-width:180px}.contact-dialog .contact-link{padding:12px;gap:10px}}
+
+/* One lead result, then contrasting web/ad examples and supporting games. */
+.results-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+.results-grid>.demo-card,.results-grid>.result-brand,.results-grid>.result-ad{grid-column:auto}
+.results-grid>.result-unreal:first-child{grid-column:1/-1;display:grid;grid-template-columns:minmax(0,1.8fr) minmax(0,1fr);align-items:center;border-color:#f1802466;background:#161518}
+.results-grid .result-unreal .demo-player{aspect-ratio:1600/1036}
+.result-unreal .demo-player>video{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#08080a}
+.results-grid .result-unreal h3{font-size:clamp(25px,2.7vw,38px);line-height:1.15}
+.results-grid .result-unreal .demo-card-copy>a{margin-top:12px}
+.results-grid .local-video-status{font-size:12px;color:#ffd0ac;margin:12px 0 0}
+.local-video-status:empty{display:none}
+.results-grid .demo-player>.demo-play:focus-visible{outline-offset:-4px}
+@media(max-width:900px){.results-grid>.result-unreal:first-child{grid-template-columns:minmax(0,1.4fr) minmax(0,1fr)}}
+@media(max-width:760px){.results-grid>.result-unreal:first-child{display:flex}.results-grid .result-unreal h3{font-size:28px}}
+@media(max-width:600px){.results-grid{grid-template-columns:minmax(0,1fr)}}

@@ -177,3 +177,41 @@
     }
   });
 })();
+
+// Preserve a direct-file link without JS; request gameplay only on activation.
+(() => {
+  document.querySelectorAll('[data-local-video]').forEach((link) => {
+    link.addEventListener('click', (event) => {
+      if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+      const player = link.closest('.demo-player');
+      if (!player) return;
+      event.preventDefault();
+      const status = player.closest('article').querySelector('.local-video-status');
+      const video = document.createElement('video');
+      video.controls = true;
+      video.playsInline = true;
+      video.preload = 'none';
+      video.poster = link.querySelector('img').src;
+      video.setAttribute('aria-label', 'Unreal Engine gameplay recording');
+      video.tabIndex = 0;
+      video.src = link.href;
+      status.textContent = 'Loading gameplay…';
+      video.addEventListener('playing', () => { status.textContent = ''; });
+      video.addEventListener('error', () => { status.textContent = 'Video unavailable here. Please try again later.'; });
+      player.replaceChildren(video);
+      video.focus({preventScroll: true});
+      video.play().catch(() => {
+        if (!video.error) status.textContent = 'Press Play in the video controls to start gameplay.';
+      });
+      // Pause offscreen or in a hidden tab; never resume sound automatically.
+      document.addEventListener('visibilitychange', () => { if (document.hidden) video.pause(); });
+      if ('IntersectionObserver' in window) {
+        new IntersectionObserver(([entry]) => { if (!entry.isIntersecting) video.pause(); }).observe(player);
+      }
+      document.getElementById('race-launch')?.addEventListener('click', () => video.pause());
+      document.querySelectorAll('[data-video-id], [data-contact-trigger]').forEach((button) => {
+        button.addEventListener('click', () => video.pause());
+      });
+    });
+  });
+})();

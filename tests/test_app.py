@@ -387,7 +387,7 @@ def test_results_showcase_sources_and_assets(client):
             assert href[1:] in parser.ids
         if link.get('target') == '_blank':
             assert {'noopener', 'noreferrer'}.issubset(link.get('rel', '').split())
-    expected = {'showcase-bloom.webp', 'showcase-capybara.webp', 'showcase-chess.jpg', 'showcase-rpg.jpg', 'showcase-ugc.webp'}
+    expected = {'showcase-bloom.webp', 'showcase-unreal.webp', 'showcase-chess.jpg', 'showcase-rpg.jpg', 'showcase-ugc.webp'}
     images = [image for image in parser.images if '/showcase-' in image['src']]
     assert {image['src'].split('/')[-1] for image in images} == expected
     for image in images:
@@ -395,7 +395,7 @@ def test_results_showcase_sources_and_assets(client):
         response = client.get(image['src'])
         assert response.status_code == 200
         assert response.headers['content-type'].startswith('image/')
-    for video_id in ('EWaZmB2nztA', 'w5zFQ66HQmg'):
+    for video_id in ('6S5AX__QRyA', 'w5zFQ66HQmg'):
         assert f'https://www.youtube.com/watch?v={video_id}' in {link.get('href') for link in parser.links}
 
 
@@ -447,3 +447,28 @@ def test_race_cinematic_poster_is_local_and_disclosed(client):
     for guard in ('prefers-reduced-motion', 'saveData', 'IntersectionObserver', 'visibilitychange', '!cover.hidden', '!userPaused'):
         assert guard in script
     assert '!video.ended' not in script
+
+
+def test_unreal_showcase_order_and_lazy_video(client):
+    import re
+    html = client.get('/').text
+    results = html.split('id="results"', 1)[1].split('</section>', 1)[0]
+    assert re.findall(r'class="demo-tag">([^<]+)', results) == [
+        'UNREAL ENGINE GAME', 'WEB DESIGN', 'VIDEO & ADVERTISING', '3D CHESS', 'FANTASY WORLD']
+    assert 'capybara' not in html.lower()
+    assert 'EWaZmB2nztA' not in html
+    assert '<video' not in results
+    assert 'data-local-video href="/static/showcase-unreal.mp4"' in results
+    assert 'using MCP to work with Unreal Engine' in results
+    assert 'Unreal uses an actual gameplay frame' in results
+    assert results.count('href="/static/showcase-unreal.mp4"') == 1
+    assert 'Open gameplay video' not in results
+    response = client.get('/static/showcase-unreal.mp4', headers={'Range': 'bytes=0-1023'})
+    assert response.status_code == 206
+    assert response.headers['content-type'] == 'video/mp4'
+    assert len(response.content) == 1024
+    script = client.get('/static/app.js').text
+    for guard in ('video.controls = true', 'video.playsInline = true', "video.preload = 'none'",
+                  'video.src = link.href', 'video.play().catch', "video.addEventListener('error'",
+                  'if (!entry.isIntersecting) video.pause()'):
+        assert guard in script
