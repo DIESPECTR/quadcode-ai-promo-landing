@@ -105,6 +105,8 @@ def test_manual_contact_choice_links_and_copy(client):
     assert 'it provides 1,000 credits.' in html
     assert 'Ask about the promo' not in html
     assert 'No Message button on LinkedIn?' in html
+    assert 'DM us <strong>PROMO</strong> to request your code. No long message needed.' in html
+    assert "Message button and send <strong>PROMO</strong>" in html
     assert 'Why Telegram?' not in html
     assert 'The bot will' not in html
     script = client.get('/static/app.js').text

@@ -24,5 +24,11 @@ Local implementation complete; no commit, push or deployment. Native dialog prov
 ## Authorized popup release
 - [x] Owner authorized commit and deployment to existing campaign origin/main and Railway production landing. Deployment skill search returned only unrelated storytelling, no suitable deployment template.
 - [x] Reviewed scoped frontend/docs/tests diff; regression rerun: 21 passed. Unrelated plans and original media excluded.
-- [ ] Commit and push six scoped files.
-- [ ] Confirm Railway SUCCESS for the new commit; verify public modal, contact URLs and mobile layout.
+- [x] Commit and push six scoped files: c1a587299f152194e695eaddecf9333db3bf1001 pushed to origin/main. Railway deployment 6d2c8ecf-f214-4215-842c-02a208681c95 received this commit; first status INITIALIZING.
+- [x] Railway deployment 6d2c8ecf-f214-4215-842c-02a208681c95 reached SUCCESS for c1a5872; public HTTPS returned 200 with contact-popup-1 assets. All five live CTA paths open the modal without movement (0px) or hash changes; close restores scroll/focus. Official LinkedIn/Telegram URLs and loaded icons confirmed. Public 320×700 emulation: modal within viewport, no page/popup horizontal overflow, contact links 86.5/80px tall. Screenshot inspected: .temp/images_from_tools/1005_191131001_brw_ss.png. Muted/loop video attributes preserved; console error filter empty. Temporary QA iframe/globals removed; live tab restored to page top. Post-release plan updates remain local documentation, not another release commit. Physical-device, messaging and redemption validation remain outside this release.
+
+## DM keyword release
+- [x] Owner authorized commit/deploy of PROMO copy. Deployment skill search found no suitable deployment template.
+- [x] Reviewed two copy changes and keyword regression assertions; 21 tests passed. No JS/CSS/media changes.
+- [ ] Commit and push scoped HTML/tests/plan to origin/main.
+- [ ] Verify Railway SUCCESS for this commit and live popup keyword, open/close behavior and mobile bounds.
